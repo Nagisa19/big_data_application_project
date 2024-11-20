@@ -6,8 +6,6 @@ services:
       - .env.postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432" # for testing
     networks:
       - backend
     healthcheck:
@@ -22,7 +20,7 @@ services:
     env_file:
       - .env.flask
     volumes:
-      - ./StockEtablissement_small.csv:/docker-entrypoint-initdb.d/StockEtablissement_small.csv:ro
+      - ./StockEtablissement.csv:/docker-entrypoint-initdb.d/StockEtablissement.csv:ro
     ports:
       - "5000:5000"
     networks:

@@ -9,7 +9,7 @@ from flask_app.db import db
 from flask_app.db.models import Etablissement
 
 # CSV file path in Docker volume
-CSV_FILE_PATH = '/docker-entrypoint-initdb.d/StockEtablissement_small.csv'
+CSV_FILE_PATH = '/docker-entrypoint-initdb.d/StockEtablissement.csv'
 
 
 def load_data_from_csv():
@@ -22,7 +22,9 @@ def load_data_from_csv():
             reader = csv.DictReader(file)
             data = []
 
+            print("Loading data from CSV into the database.")
             for row in reader:
+                print(f"Loading : {row}")
                 # Map CSV columns to model fields
                 mapped_row = {
                     'siren': row.get('siren'),

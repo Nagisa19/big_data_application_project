@@ -64,6 +64,6 @@ class Etablissement(db.Model):
     __table_args__ = (
         db.Index('idx_siren', 'siren'),
         db.Index('idx_nic', 'nic'),
-        db.Index('idx_code_postal', 'code_postal'),
-        db.Index('idx_libelle_commune', 'libelle_commune'),
+        db.Index('idx_siret', 'siret'),
+        db.Index('idx_code_postal', 'code_postal')
     )
