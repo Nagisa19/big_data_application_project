@@ -68,6 +68,8 @@ Projet application of Big Data M2.
   
     - Get a List of Etablissements with query :
     ```shell
+    curl -X GET "http://localhost:5000/api/etablissements?page=1&per_page=10&sort=-date_creation"
+  
     curl -X GET "http://localhost:5000/api/etablissements?page=1&per_page=10&sort=-date_creation&siret=00032517500016"
     ```
   
