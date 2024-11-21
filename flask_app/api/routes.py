@@ -7,6 +7,8 @@ from flask_app.api import api_bp
 from flask_app.db import db
 from flask_app.db.models import Etablissement
 
+from sqlalchemy import inspect
+
 
 def etablissement_to_dict(etablissement):
     """
@@ -14,7 +16,8 @@ def etablissement_to_dict(etablissement):
     :param etablissement:
     :return:
     """
-    return {c.name: getattr(etablissement, c.name) for c in etablissement.__table__.columns}
+    inspector = inspect(etablissement)
+    return {column.key: getattr(etablissement, column.key) for column in inspector.mapper.column_attrs}
 
 
 @api_bp.route("/hello", methods=["GET"])
@@ -32,7 +35,7 @@ def count_establishments():
     Test DB.
     :return: a json with the count of Etablissements.
     """
-    count = db.session.query(Etablissement).count()
+    count = Etablissement.query.count()
     return jsonify({'count': count})
 
 
@@ -47,7 +50,8 @@ def get_etablissements():
     query = Etablissement.query
 
     # List of valid fields for filtering and sorting
-    valid_fields = [column.name for column in Etablissement.__table__.columns]
+    inspector = inspect(Etablissement)
+    valid_fields = [column.key for column in inspector.mapper.column_attrs]
 
     # Implement filters
     filter_args = {}
@@ -111,9 +115,11 @@ def create_etablissement():
     if not data:
         abort(400, description="No input data provided")
 
-    # Ensure 'siret' is provided
-    if 'siret' not in data:
-        abort(400, description="'siret' is a required field")
+    # Ensure obligatory is provided
+    required_fields = ['siret', 'siren', 'nic']
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        abort(400, description=f"Missing required field(s): {', '.join(missing_fields)}")
 
     # Check if Etablissement with the same SIRET already exists
     existing_etablissement = Etablissement.query.get(data['siret'])
@@ -146,12 +152,15 @@ def update_etablissement(siret):
     if not data:
         abort(400, description="No input data provided")
 
-    # Prevent changing the SIRET
-    if 'siret' in data and data['siret'] != siret:
-        abort(400, description="Cannot change the 'siret' of an Etablissement")
+    # Prevent changing the obligatory fields
+    unmodifiable_fields = ['siret', 'siren', 'nic']
+    for field in unmodifiable_fields:
+        if field in data:
+            abort(400, description=f"Cannot change the '{field}' of an Etablissement")
 
     # Update fields
-    valid_fields = [column.name for column in Etablissement.__table__.columns]
+    inspector = inspect(Etablissement)
+    valid_fields = [column.key for column in inspector.mapper.column_attrs]
     for key, value in data.items():
         if key in valid_fields:
             setattr(etablissement, key, value)
