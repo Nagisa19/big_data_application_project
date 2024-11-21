@@ -56,7 +56,17 @@ Projet application of Big Data M2.
 
 - L'API de test est accessible à l'adresse [http://localhost:5000/api/hello](http://localhost:5000/api/hello)
 - Elles peuvent être testées à l'aide des commandes curl suivantes :
-    - Get a List of Etablissements :
+    - Hello World : 
+    ```shell
+    curl -X GET "http://localhost:5000/api/hello"
+    ```
+  
+    - Check Data Base rows number :
+    ```shell
+    curl -X GET "http://localhost:5000/api/db_check"
+    ```
+  
+    - Get a List of Etablissements with query :
     ```shell
     curl -X GET "http://localhost:5000/api/etablissements?page=1&per_page=10&sort=-date_creation&siret=00032517500016"
     ```
@@ -99,7 +109,7 @@ Projet application of Big Data M2.
    -d '{
      "statut_diffusion": "B",
      "tranche_effectifs": 100
-  }'
+   }'
    ```
   
    - Delete an Etablissement :
