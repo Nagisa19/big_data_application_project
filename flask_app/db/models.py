@@ -82,6 +82,58 @@ class Etablissement(db.Model):
             denomination_usuelle=None, activite_principale=None, nomenclature_activite_principale=None,
             caractere_employeur=None
     ):
+        """
+        Initializes an instance of the class with detailed attributes.
+
+        :param siren: The SIREN number of the entity.
+        :param nic: The NIC (Numéro Interne de Classement) of the establishment.
+        :param siret: The SIRET number (SIREN + NIC) of the establishment.
+        :param statut_diffusion: Status of data dissemination (optional).
+        :param date_creation: The creation date of the establishment (optional).
+        :param tranche_effectifs: Range of employee counts (optional).
+        :param annee_effectifs: Year of the employee count data (optional).
+        :param activite_principale_registre: Main activity code in the registry (optional).
+        :param date_dernier_traitement: Date of the last data update (optional).
+        :param etablissement_siege: Indicates if the establishment is a headquarters (optional).
+        :param nombre_periodes: Number of operational periods (optional).
+        :param complement_adresse: Additional address details (optional).
+        :param numero_voie: Street number (optional).
+        :param indice_repetition: Repetition indicator (e.g., bis, ter) (optional).
+        :param type_voie: Type of street (e.g., avenue, boulevard) (optional).
+        :param libelle_voie: Street name (optional).
+        :param code_postal: Postal code (optional).
+        :param libelle_commune: Name of the city/town (optional).
+        :param libelle_commune_etranger: City name (if located abroad) (optional).
+        :param distribution_speciale: Special distribution information (optional).
+        :param code_commune: City code (optional).
+        :param code_cedex: CEDEX code (optional).
+        :param libelle_cedex: CEDEX designation (optional).
+        :param code_pays_etranger: Foreign country code (if applicable) (optional).
+        :param libelle_pays_etranger: Foreign country name (if applicable) (optional).
+        :param complement_adresse2: Additional address details for secondary location (optional).
+        :param numero_voie2: Street number for secondary location (optional).
+        :param indice_repetition2: Repetition indicator for secondary location (optional).
+        :param type_voie2: Type of street for secondary location (optional).
+        :param libelle_voie2: Street name for secondary location (optional).
+        :param code_postal2: Postal code for secondary location (optional).
+        :param libelle_commune2: City name for secondary location (optional).
+        :param libelle_commune_etranger2: City name abroad for secondary location (optional).
+        :param distribution_speciale2: Special distribution information for secondary location (optional).
+        :param code_commune2: City code for secondary location (optional).
+        :param code_cedex2: CEDEX code for secondary location (optional).
+        :param libelle_cedex2: CEDEX designation for secondary location (optional).
+        :param code_pays_etranger2: Foreign country code for secondary location (optional).
+        :param libelle_pays_etranger2: Foreign country name for secondary location (optional).
+        :param date_debut: Start date of activity (optional).
+        :param etat_administratif: Administrative state/status of the entity (optional).
+        :param enseigne1: First name of the establishment (optional).
+        :param enseigne2: Second name of the establishment (optional).
+        :param enseigne3: Third name of the establishment (optional).
+        :param denomination_usuelle: Commonly used name of the establishment (optional).
+        :param activite_principale: Main activity code (optional).
+        :param nomenclature_activite_principale: Nomenclature of the main activity (optional).
+        :param caractere_employeur: Indicates if the establishment is an employer (optional).
+        """
         self.siren = siren
         self.nic = nic
         self.siret = siret

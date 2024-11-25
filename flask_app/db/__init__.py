@@ -1,5 +1,5 @@
 """
-Initialize the database.
+Initialization file for the database management.
 """
 
 from flask_sqlalchemy import SQLAlchemy

@@ -15,6 +15,7 @@ CSV_FILE_PATH = '/docker-entrypoint-initdb.d/StockEtablissement.csv'
 def load_data_from_csv():
     """
     Reads data from the CSV file and inserts it into the database row by row to avoid memory issues.
+    :return: Nothing.
     """
     # Check if data already exists in the Etablissement table
     if db.session.query(db.func.count(Etablissement.siret)).scalar() == 0:
@@ -89,7 +90,9 @@ def load_data_from_csv():
 
 def parse_date(date_str):
     """
-    Parses a date string and returns a datetime.date object.
+    Parses a date string into a datetime.date object.
+    :param date_str: The date string to parse, formatted as 'YYYY-MM-DD'.
+    :return: A datetime.date object representing the parsed date, or None if parsing fails.
     """
     if date_str:
         try:
@@ -102,6 +105,8 @@ def parse_date(date_str):
 def parse_datetime(datetime_str):
     """
     Parses a datetime string and returns a datetime.datetime object.
+    :param datetime_str: The datetime string to parse, formatted as 'YYYY-MM-DDTHH:MM:SS'.
+    :return: A datetime.datetime object representing the parsed datetime, or None if parsing fails.
     """
     if datetime_str:
         try:
@@ -114,6 +119,8 @@ def parse_datetime(datetime_str):
 def parse_int(value):
     """
     Parses a string to an integer.
+    :param value: The string to parse as an integer.
+    :return: An integer if the string can be parsed, otherwise None.
     """
     if value:
         try:
@@ -125,7 +132,11 @@ def parse_int(value):
 
 def parse_bool(value):
     """
-    Parses a string to a boolean.
+    Parses a string into a boolean value.
+    :param value: The string to parse as a boolean. Accepted values (case-insensitive) include:
+                  'true', '1', 'yes', 'oui', 'o' for True.
+                  Any other value will be considered False.
+    :return: A boolean value (True or False), or None if the input is None.
     """
     if value is not None:
         return value.lower() in ('true', '1', 'yes', 'oui', 'o')
@@ -134,7 +145,8 @@ def parse_bool(value):
 
 def initialize_database():
     """
-    Initialize the database and load data if the Etablissement table is empty.
+    Initializes the database by creating all necessary tables and populating
+    the data if the Etablissement table is empty.
     """
     db.create_all()  # Create tables if they don't exist
     load_data_from_csv()  # Load data if table is empty

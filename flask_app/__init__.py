@@ -1,5 +1,5 @@
 """
-Init file for flask_app
+Initialization file for the main Flask application.
 """
 
 import os
