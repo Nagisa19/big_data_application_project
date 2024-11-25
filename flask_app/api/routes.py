@@ -13,8 +13,8 @@ from sqlalchemy import inspect
 def etablissement_to_dict(etablissement):
     """
     Helper function to convert Etablissement objects to dictionaries
-    :param etablissement:
-    :return:
+    :param etablissement: instance of an etablissement.
+    :return: dictionnary representation of the etablissement.
     """
     inspector = inspect(etablissement)
     return {column.key: getattr(etablissement, column.key) for column in inspector.mapper.column_attrs}
@@ -43,6 +43,7 @@ def count_establishments():
 def get_etablissements():
     """
     Get a list of Etablissements with optional filters, sorting, and pagination.
+    :return: a list of etablissements.
     """
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
@@ -99,6 +100,8 @@ def get_etablissements():
 def get_etablissement(siret):
     """
     Get an Etablissement by SIRET.
+    :param siret: the siret number of the etablissement to retrieve.
+    :return: a json containing the wanted etablissement.
     """
     etablissement = Etablissement.query.get(siret)
     if etablissement is None:
@@ -109,7 +112,8 @@ def get_etablissement(siret):
 @api_bp.route("/etablissements", methods=["POST"])
 def create_etablissement():
     """
-    Create a new Etablissement.
+    Create a new Etablissement. The fields 'siret', 'siren' and 'nic' are required.
+    :return: a json containing the created etablissement or an error message.
     """
     data = request.get_json()
     if not data:
@@ -143,6 +147,9 @@ def create_etablissement():
 def update_etablissement(siret):
     """
     Update an existing Etablissement.
+    - Allows modification of fields except for 'siret', 'siren', and 'nic'.
+    :param siret: the siret number of the etablissment to update.
+    :return: a json containing the updated etablissement or an error message.
     """
     etablissement = Etablissement.query.get(siret)
     if etablissement is None:
@@ -179,7 +186,9 @@ def update_etablissement(siret):
 @api_bp.route("/etablissements/<string:siret>", methods=["DELETE"])
 def delete_etablissement(siret):
     """
-    Delete an Etablissement.
+     Delete an Etablissement by giving the siret number of the Etablissement to delete.
+    :param siret: the siret number of the etablissment to delete.
+    :return: a message confirming the deletion or an error message.
     """
     etablissement = Etablissement.query.get(siret)
     if etablissement is None:
