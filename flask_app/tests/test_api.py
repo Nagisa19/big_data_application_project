@@ -13,6 +13,10 @@ from flask_app.api import api_bp
 
 
 class TestEtablissementAPI(unittest.TestCase):
+    """
+    Test cases for Etablissement API.
+    """
+
     def setUp(self):
         """
         Set up a Flask app and database manually for testing.
@@ -50,10 +54,11 @@ class TestEtablissementAPI(unittest.TestCase):
                 numero_voie=10,
                 libelle_voie="Rue Exemple",
                 code_postal="75001",
-                libelle_commune="Paris"
+                libelle_commune="Paris",
             )
             db.session.add(sample_etablissement)
             db.session.commit()
+
 
     def tearDown(self):
         """
@@ -63,6 +68,7 @@ class TestEtablissementAPI(unittest.TestCase):
             db.session.remove()
             db.drop_all()
 
+
     def test_hello_world(self):
         """
         Test the /hello route.
@@ -70,6 +76,7 @@ class TestEtablissementAPI(unittest.TestCase):
         response = self.client.get('/api/hello')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {"message": "Hello, World!"})
+
 
     def test_get_etablissements(self):
         """
@@ -80,6 +87,7 @@ class TestEtablissementAPI(unittest.TestCase):
         self.assertEqual(len(response.json['items']), 1)
         self.assertEqual(response.json['items'][0]['siret'], "12345678900012")
 
+
     def test_get_etablissement(self):
         """
         Test fetching a single etablissement by SIRET.
@@ -87,6 +95,7 @@ class TestEtablissementAPI(unittest.TestCase):
         response = self.client.get('/api/etablissements/12345678900012')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json['siret'], "12345678900012")
+
 
     def test_create_etablissement(self):
         """
@@ -107,11 +116,12 @@ class TestEtablissementAPI(unittest.TestCase):
             "numero_voie": 12,
             "libelle_voie": "Rue Test",
             "code_postal": "69001",
-            "libelle_commune": "Lyon"
+            "libelle_commune": "Lyon",
         }
         response = self.client.post('/api/etablissements', json=new_etablissement)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json['siret'], "98765432100098")
+
 
     def test_update_etablissement(self):
         """
@@ -119,12 +129,13 @@ class TestEtablissementAPI(unittest.TestCase):
         """
         update_data = {
             "complement_adresse": "Nouvelle adresse complémentaire",
-            "libelle_voie": "Nouvelle Rue Exemple"
+            "libelle_voie": "Nouvelle Rue Exemple",
         }
         response = self.client.put('/api/etablissements/12345678900012', json=update_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json['complement_adresse'], "Nouvelle adresse complémentaire")
         self.assertEqual(response.json['libelle_voie'], "Nouvelle Rue Exemple")
+
 
     def test_delete_etablissement(self):
         """
@@ -137,5 +148,7 @@ class TestEtablissementAPI(unittest.TestCase):
         response = self.client.get('/api/etablissements/12345678900012')
         self.assertEqual(response.status_code, 404)
 
+
 if __name__ == '__main__':
     unittest.main()
+
