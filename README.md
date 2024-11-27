@@ -20,19 +20,26 @@ Project application of Big Data M2.
       POSTGRES_DB={my_db}
       ```
       
-  - ".env.flask" :
-      ```text
-      FLASK_ENV=development
-      DATABASE_URL=postgresql://{my_user}:{my_password}@flask_db:5432/{my_db}
-      ```
+    - ".env.flask" :
+        ```text
+        FLASK_ENV=development
+        DATABASE_URL=postgresql://{my_user}:{my_password}@flask_db:5432/{my_db}
+        ```
     
 - To launch the full project, moove to the project's directory :
   ```shell
   cd big_data_application_project
   ```
   
-- You must download the file "StockEtablissement.csv" and place it at the root of the project.
-  
+- You must download the file [StockEtablissement_utf8.csv](https://efrei365net.sharepoint.com/:u:/r/sites/Section_2024-2025-A-ST2ABD-Groupe-DE2/Supports%20de%20cours/Datasets/API/StockEtablissement_utf8.zip?csf=1&web=1&e=Aa6HvX) and place it at the root of the project.
+    - To simplify the test :
+      ```shell
+        head -n 1000 StockEtablissement_utf8.csv > StockEtablissement.csv
+      ```
+    - For the full version :  
+      ```shell
+      mv StockEtablissement_utf8.csv StockEtablissement.csv
+      ```
 - Then, to launch the services :
   ```shell
   docker-compose up -d --build
