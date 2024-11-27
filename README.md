@@ -1,18 +1,18 @@
 # Application of Big Data project
 
-Projet application of Big Data M2.
+Project application of Big Data M2.
 
-# Présentation technique et gestion des systèmes.
+# Technichal presentation and systems managment.
 
 ## Organisation
 
 ![](./graphs/docker_organisation.png)
 
-## Guide d'utilisation
+## Guide
 
-- Ce projet est basé sur docker et docker-compose pour faciliter sa distribution.
-- Il faut donc installer docker et docker-compose.
-- Il faut ensuite créer les fichiers secrets dans la racine du projet :
+- This project is based on docker and docker-compose to facilitate its distribution.
+- Therefore, it is necessary to install docker and docker-compose.
+- Then, you must create the secret files in the root of the project :
     - ".env.postgres" :
       ```text
       POSTGRES_USER={my_user}
@@ -26,44 +26,36 @@ Projet application of Big Data M2.
       DATABASE_URL=postgresql://{my_user}:{my_password}@flask_db:5432/{my_db}
       ```
     
-- Pour lancer le projet complet, on se déplace dans le répertoire du projet :
+- To launch the full project, moove to the project's directory :
   ```shell
   cd big_data_application_project
   ```
   
-- Il faut télécharger le fichier "StockEtablissement_utf8.csv" et le stocker à la racine du projet.
-    - Pour simplifier les tests :
-      ```shell
-      head -n 1000 StockEtablissement_utf8.csv > StockEtablissement.csv
-      ```
-    - Pour la version complète :
-      ```shell
-      mv StockEtablissement_utf8.csv StockEtablissement.csv
-      ```
-
-- Puis, pour lancer les services :
+- You must download the file "StockEtablissement.csv" and place it at the root of the project.
+  
+- Then, to launch the services :
   ```shell
   docker-compose up -d --build
   ```
 
-- Pour arrêter tous les services :
+- To stop the services :
   ```shell
   docker-compose stop
   ```
 
-- Pour arrêter les services et supprimer les conteneurs et les volumes :
+- To stop the services and delete the containers and the volumes :
   ```shell
   docker-compose down
   ```
 
-- Il est à noter que le volume utilisé par la base de données Postgres survit aux arrêts. Si on veut repartir de zéro,
-  il faut supprimer le volume :
+- Note that the volume used by the Postgres database survives the stops. If you want to start from scratch,
+  Remove the volume:
   ```shell 
   docker volume rm big_data_application_project_postgres_data
   ```
 
-- L'API de test est accessible à l'adresse [http://localhost:5000/api/hello](http://localhost:5000/api/hello)
-- Elles peuvent être testées à l'aide des commandes curl suivantes :
+- The test API is accessible at [http://localhost:5000/api/hello](http://localhost:5000/api/hello)
+- They also can be tested with the following curl commands:
     - Hello World : 
     ```shell
     curl -X GET "http://localhost:5000/api/hello"
