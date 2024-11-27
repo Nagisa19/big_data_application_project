@@ -139,6 +139,13 @@
 ### Unitest
 
 - To run the unitest from the root of the project :
-   ```shell
-   python -m unittest flask_app/tests/test_api.py
-   ```
+  - If outside the docker container :
+     ```shell
+     python -m unittest flask_app/tests/test_api.py
+     ```
+
+  - If inside the docker container :
+     ```shell
+     cd ..
+     python -m unittest flask_app/tests/test_api.py
+     ```
