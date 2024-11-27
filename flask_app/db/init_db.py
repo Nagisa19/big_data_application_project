@@ -3,7 +3,8 @@ Initialize the database.
 """
 
 import csv
-from datetime import datetime
+
+from datetime import datetime, date
 
 from flask_app.db import db
 from flask_app.db.models import Etablissement
@@ -12,7 +13,7 @@ from flask_app.db.models import Etablissement
 CSV_FILE_PATH = '/docker-entrypoint-initdb.d/StockEtablissement.csv'
 
 
-def load_data_from_csv():
+def load_data_from_csv() -> None:
     """
     Reads data from the CSV file and inserts it into the database row by row to avoid memory issues.
     :return: Nothing.
@@ -88,7 +89,7 @@ def load_data_from_csv():
             print("Data loaded successfully row by row from CSV into the database.")
 
 
-def parse_date(date_str):
+def parse_date(date_str: str) -> date | None:
     """
     Parses a date string into a datetime.date object.
     :param date_str: The date string to parse, formatted as 'YYYY-MM-DD'.
@@ -102,7 +103,7 @@ def parse_date(date_str):
     return None
 
 
-def parse_datetime(datetime_str):
+def parse_datetime(datetime_str: str) -> date | None:
     """
     Parses a datetime string and returns a datetime.datetime object.
     :param datetime_str: The datetime string to parse, formatted as 'YYYY-MM-DDTHH:MM:SS'.
@@ -116,7 +117,7 @@ def parse_datetime(datetime_str):
     return None
 
 
-def parse_int(value):
+def parse_int(value: str) -> int | None:
     """
     Parses a string to an integer.
     :param value: The string to parse as an integer.
@@ -130,7 +131,7 @@ def parse_int(value):
     return None
 
 
-def parse_bool(value):
+def parse_bool(value: str) -> bool | None:
     """
     Parses a string into a boolean value.
     :param value: The string to parse as a boolean. Accepted values (case-insensitive) include:
@@ -143,10 +144,11 @@ def parse_bool(value):
     return None
 
 
-def initialize_database():
+def initialize_database() -> None:
     """
     Initializes the database by creating all necessary tables and populating
     the data if the Etablissement table is empty.
+    :return: nothing.
     """
     db.create_all()  # Create tables if they don't exist
     load_data_from_csv()  # Load data if table is empty

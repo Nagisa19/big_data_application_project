@@ -31,8 +31,16 @@ Projet application of Big Data M2.
   cd big_data_application_project
   ```
   
-- Il faut télécharger le fichier "StockEtablissement.csv" et le stocker à la racine du projet.
-  
+- Il faut télécharger le fichier "StockEtablissement_utf8.csv" et le stocker à la racine du projet.
+    - Pour simplifier les tests :
+      ```shell
+      head -n 1000 StockEtablissement_utf8.csv > StockEtablissement.csv
+      ```
+    - Pour la version complète :
+      ```shell
+      mv StockEtablissement_utf8.csv StockEtablissement.csv
+      ```
+
 - Puis, pour lancer les services :
   ```shell
   docker-compose up -d --build

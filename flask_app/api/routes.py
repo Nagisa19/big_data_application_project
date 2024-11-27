@@ -2,15 +2,18 @@
 API routes.
 """
 
-from flask import request, jsonify, abort
+from datetime import datetime
+
+from sqlalchemy import inspect
+
+from flask import request, jsonify, abort, Response
+
 from flask_app.api import api_bp
 from flask_app.db import db
 from flask_app.db.models import Etablissement
 
-from sqlalchemy import inspect
 
-
-def etablissement_to_dict(etablissement):
+def etablissement_to_dict(etablissement: Etablissement) -> dict:
     """
     Helper function to convert Etablissement objects to dictionaries
     :param etablissement: instance of an etablissement.
@@ -21,7 +24,7 @@ def etablissement_to_dict(etablissement):
 
 
 @api_bp.route("/hello", methods=["GET"])
-def hello_world():
+def hello_world() -> Response:
     """
     Test API.
     :return: a json saying "Hello, World!".
@@ -30,7 +33,7 @@ def hello_world():
 
 
 @api_bp.route("/db_check", methods=["GET"])
-def count_establishments():
+def count_establishments() -> Response:
     """
     Test DB.
     :return: a json with the count of Etablissements.
@@ -40,7 +43,7 @@ def count_establishments():
 
 
 @api_bp.route("/etablissements", methods=["GET"])
-def get_etablissements():
+def get_etablissements() -> Response:
     """
     Get a list of Etablissements with optional filters, sorting, and pagination.
     :return: a list of etablissements.
@@ -97,7 +100,7 @@ def get_etablissements():
 
 
 @api_bp.route("/etablissements/<string:siret>", methods=["GET"])
-def get_etablissement(siret):
+def get_etablissement(siret: str) -> Response:
     """
     Get an Etablissement by SIRET.
     :param siret: the siret number of the etablissement to retrieve.
@@ -110,7 +113,7 @@ def get_etablissement(siret):
 
 
 @api_bp.route("/etablissements", methods=["POST"])
-def create_etablissement():
+def create_etablissement() -> (Response, int):
     """
     Create a new Etablissement. The fields 'siret', 'siren' and 'nic' are required.
     :return: a json containing the created etablissement or an error message.
@@ -119,11 +122,18 @@ def create_etablissement():
     if not data:
         abort(400, description="No input data provided")
 
-    # Ensure obligatory is provided
+    # Ensure obligatory fields are provided
     required_fields = ['siret', 'siren', 'nic']
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         abort(400, description=f"Missing required field(s): {', '.join(missing_fields)}")
+
+    # Convert 'date_creation' to datetime.date if it's present
+    if 'date_creation' in data:
+        try:
+            data['date_creation'] = datetime.strptime(data['date_creation'], '%Y-%m-%d').date()
+        except ValueError as e:
+            abort(400, description=f"Invalid date format for 'date_creation': {e}")
 
     # Check if Etablissement with the same SIRET already exists
     existing_etablissement = Etablissement.query.get(data['siret'])
@@ -144,7 +154,7 @@ def create_etablissement():
 
 
 @api_bp.route("/etablissements/<string:siret>", methods=["PUT"])
-def update_etablissement(siret):
+def update_etablissement(siret: str) -> Response:
     """
     Update an existing Etablissement.
     - Allows modification of fields except for 'siret', 'siren', and 'nic'.
@@ -184,7 +194,7 @@ def update_etablissement(siret):
 
 
 @api_bp.route("/etablissements/<string:siret>", methods=["DELETE"])
-def delete_etablissement(siret):
+def delete_etablissement(siret: str) -> Response:
     """
      Delete an Etablissement by giving the siret number of the Etablissement to delete.
     :param siret: the siret number of the etablissment to delete.

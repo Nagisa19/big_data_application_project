@@ -2,6 +2,13 @@
 Database models.
 """
 
+import datetime
+
+from typing import Optional
+
+from sqlalchemy import event
+from sqlalchemy.orm import Session
+
 from flask_app.db import db
 
 
@@ -69,22 +76,58 @@ class Etablissement(db.Model):
     )
 
     def __init__(
-            self, siren, nic, siret, statut_diffusion=None, date_creation=None, tranche_effectifs=None,
-            annee_effectifs=None, activite_principale_registre=None, date_dernier_traitement=None,
-            etablissement_siege=None, nombre_periodes=None, complement_adresse=None, numero_voie=None,
-            indice_repetition=None, type_voie=None, libelle_voie=None, code_postal=None, libelle_commune=None,
-            libelle_commune_etranger=None, distribution_speciale=None, code_commune=None, code_cedex=None,
-            libelle_cedex=None, code_pays_etranger=None, libelle_pays_etranger=None, complement_adresse2=None,
-            numero_voie2=None, indice_repetition2=None, type_voie2=None, libelle_voie2=None, code_postal2=None,
-            libelle_commune2=None, libelle_commune_etranger2=None, distribution_speciale2=None, code_commune2=None,
-            code_cedex2=None, libelle_cedex2=None, code_pays_etranger2=None, libelle_pays_etranger2=None,
-            date_debut=None, etat_administratif=None, enseigne1=None, enseigne2=None, enseigne3=None,
-            denomination_usuelle=None, activite_principale=None, nomenclature_activite_principale=None,
-            caractere_employeur=None
+            self,
+            siren: str,
+            nic: str,
+            siret: str,
+            statut_diffusion: Optional[str] = None,
+            date_creation: Optional[datetime.date] = None,
+            tranche_effectifs: Optional[int] = None,
+            annee_effectifs: Optional[int] = None,
+            activite_principale_registre: Optional[str] = None,
+            date_dernier_traitement: Optional[datetime] = None,
+            etablissement_siege: Optional[bool] = None,
+            nombre_periodes: Optional[int] = None,
+            complement_adresse: Optional[str] = None,
+            numero_voie: Optional[int] = None,
+            indice_repetition: Optional[str] = None,
+            type_voie: Optional[str] = None,
+            libelle_voie: Optional[str] = None,
+            code_postal: Optional[str] = None,
+            libelle_commune: Optional[str] = None,
+            libelle_commune_etranger: Optional[str] = None,
+            distribution_speciale: Optional[str] = None,
+            code_commune: Optional[str] = None,
+            code_cedex: Optional[str] = None,
+            libelle_cedex: Optional[str] = None,
+            code_pays_etranger: Optional[str] = None,
+            libelle_pays_etranger: Optional[str] = None,
+            complement_adresse2: Optional[str] = None,
+            numero_voie2: Optional[int] = None,
+            indice_repetition2: Optional[str] = None,
+            type_voie2: Optional[str] = None,
+            libelle_voie2: Optional[str] = None,
+            code_postal2: Optional[str] = None,
+            libelle_commune2: Optional[str] = None,
+            libelle_commune_etranger2: Optional[str] = None,
+            distribution_speciale2: Optional[str] = None,
+            code_commune2: Optional[str] = None,
+            code_cedex2: Optional[str] = None,
+            libelle_cedex2: Optional[str] = None,
+            code_pays_etranger2: Optional[str] = None,
+            libelle_pays_etranger2: Optional[str] = None,
+            date_debut: Optional[datetime.date] = None,
+            etat_administratif: Optional[str] = None,
+            enseigne1: Optional[str] = None,
+            enseigne2: Optional[str] = None,
+            enseigne3: Optional[str] = None,
+            denomination_usuelle: Optional[str] = None,
+            activite_principale: Optional[str] = None,
+            nomenclature_activite_principale: Optional[str] = None,
+            caractere_employeur: Optional[str] = None
     ):
         """
         Initializes an instance of the class with detailed attributes.
-
         :param siren: The SIREN number of the entity.
         :param nic: The NIC (Numéro Interne de Classement) of the establishment.
         :param siret: The SIRET number (SIREN + NIC) of the establishment.
@@ -182,3 +225,112 @@ class Etablissement(db.Model):
         self.activite_principale = activite_principale
         self.nomenclature_activite_principale = nomenclature_activite_principale
         self.caractere_employeur = caractere_employeur
+
+
+class AuditLog(db.Model):
+    """
+    Audit table containing data about database transactions.
+    """
+    __tablename__ = 'audit_log'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    table_name = db.Column(db.String(255), nullable=False)
+    operation = db.Column(db.String(10), nullable=False)  # INSERT, UPDATE, DELETE
+    timestamp = db.Column(db.DateTime, default=db.func.now(), nullable=False)
+    row_data = db.Column(db.JSON, nullable=False)
+
+    def __init__(self, table_name: str, operation: str, row_data: dict):
+        """
+        Initializes an instance of the class with detailed attributes.
+        :param table_name: name of the affected table.
+        :param operation: operation of the affected table.
+        :param row_data: data sent to the affected table.
+        """
+        self.table_name = table_name
+        self.operation = operation
+        self.row_data = row_data
+
+
+def serialize_row_data(row_data: dict) -> dict:
+    """
+    Serialize row data to make it JSON serializable.
+    :param row_data: the data to serialize.
+    :return: the serialized data.
+    """
+    def serialize(value: datetime.date | datetime.datetime | str) -> str:
+        """
+        Converts a datetime.date, datetime.datetime, or string value into a string format.
+        :param value: The value to be serialized. It can be a datetime.date, datetime.datetime, or string.
+        :type value: datetime.date | datetime.datetime | str
+        :return: The serialized string representation of the input value.
+        """
+        if isinstance(value, (datetime.date, datetime.datetime)):
+            return value.isoformat()
+        return value
+
+    return {key: serialize(value) for key, value in row_data.items()}
+
+
+def record_audit_log(session: Session, operation: str, instance) -> None:
+    """
+    Helper function to record an audit log entry for database operations.
+    :param session: The SQLAlchemy Session object to interact with the database.
+    :param operation: The type of operation performed ('INSERT', 'UPDATE', 'DELETE').
+    :param instance: The ORM-mapped instance representing the database record.
+    :return: None
+    """
+    if isinstance(instance, AuditLog):
+        # Skip logging for the AuditLog table itself
+        return
+
+    # Get the table name from the instance's class
+    table_name = instance.__tablename__
+
+    # Serialize the row data
+    row_data = {}
+    if operation == 'DELETE':
+        # Collect data for delete operations
+        row_data = {
+            column.name: getattr(instance, column.name)
+            for column in instance.__table__.columns
+        }
+    elif operation in {'INSERT', 'UPDATE'}:
+        # Collect data for insert and update operations
+        row_data = {
+            column.name: getattr(instance, column.name)
+            for column in instance.__table__.columns
+        }
+
+    # Serialize row_data to handle non-serializable objects
+    serialized_row_data = serialize_row_data(row_data)
+
+    # Create an AuditLog entry
+    audit_entry = AuditLog(
+        table_name=table_name,
+        operation=operation,
+        row_data=serialized_row_data
+    )
+    # Add the audit entry to the session
+    session.add(audit_entry)
+
+
+@event.listens_for(Session, "before_flush")
+def before_flush(session: Session, flush_context, instances) -> None:
+    """
+    Event listener to handle auditing for insert, update, and delete operations before a flush.
+    :param session: The SQLAlchemy Session instance initiating the flush.
+    :param flush_context: Flush-specific context provided by SQLAlchemy (not used here).
+    :param instances: Instances involved in the flush (not directly used here).
+    :return: None
+    """
+    for instance in session.new:
+        # Handle inserts
+        record_audit_log(session, 'INSERT', instance)
+
+    for instance in session.dirty:
+        # Handle updates
+        record_audit_log(session, 'UPDATE', instance)
+
+    for instance in session.deleted:
+        # Handle deletes
+        record_audit_log(session, 'DELETE', instance)
