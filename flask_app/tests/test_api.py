@@ -141,5 +141,6 @@ class TestEtablissementAPI(unittest.TestCase):
         response = self.client.get('/api/etablissements/12345678900012')
         self.assertEqual(response.status_code, 404)
 
+
 if __name__ == '__main__':
     unittest.main()
