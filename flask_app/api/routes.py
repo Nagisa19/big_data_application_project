@@ -6,11 +6,12 @@ from datetime import datetime
 
 from sqlalchemy import inspect
 
-from flask import request, jsonify, abort, Response
+from flask import request, jsonify, abort, Response, Blueprint
 
-from flask_app.api import api_bp
 from flask_app.db import db
 from flask_app.db.models import Etablissement
+
+api_bp = Blueprint('api', __name__)
 
 
 def etablissement_to_dict(etablissement: Etablissement) -> dict:

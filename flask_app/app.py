@@ -5,7 +5,7 @@ Main Flask application.
 from flask import Flask
 from flask_migrate import Migrate
 from flask_app.db import db
-from flask_app.api import api_bp
+from flask_app.api.routes import api_bp
 from flask_app.db.init_db import initialize_database
 from flask_app import db_url
 

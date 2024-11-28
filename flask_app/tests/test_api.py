@@ -9,7 +9,7 @@ import datetime
 from flask import Flask
 
 from flask_app.db.models import Etablissement, db
-from flask_app.api import api_bp
+from flask_app.api.routes import api_bp
 
 
 class TestEtablissementAPI(unittest.TestCase):
